@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planning Form</title>
+    <link rel="stylesheet" href="plan.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="mainContainer">
+        <div class="container">
+            <!-- <img src="./Jatayuv Ai Black Insta Profile Pic.png" class="logo"> -->
+            <h2>Travel Planning</h2>
+            <form id="travelForm">
+
+
+                <label for="source">Source:</label>
+                <input type="text" id="source" name="source">
+
+                <label for="destination">Destination:</label>
+                <input type="text" id="destination" name="destination">
+
+                <label for="days">How Many Days:</label>
+                <input type="number" id="days" name="days" min="1">
+
+                <label for="budget">Budget:</label>
+                <input type="number" id="budget" name="budget" min="1">
+
+                <!-- Travel Preference: Source → Destination -->
+                <label for="travelPreferenceOnward">Travel Preference from (Source → Destination):</label>
+                <select id="travelPreferenceOnward" name="travelPreferenceOnward" onchange="showOptions('Onward')">
+                    <option value="">--Select Preference--</option>
+                    <option value="Bus">Bus</option>
+                    <option value="Train">Train</option>
+                    <option value="Any">Anything is fine</option>
+                </select>
+
+                <div id="busOptionsOnward" style="display:none;">
+                    <label>Preferred Time Range:</label>
+                    <input type="time" id="busStartTimeOnward" name="busStartTimeOnward">
+                    to
+                    <input type="time" id="busEndTimeOnward" name="busEndTimeOnward">
+                    <br><br>
+                    <label for="busTypeOnward">Bus Type:</label>
+                    <select id="busTypeOnward" name="busTypeOnward">
+                        <option value="AC-Seater">AC Seater</option>
+                        <option value="AC-Sleeper">AC Sleeper</option>
+                        <option value="Non-AC Seater">Non-AC Seater</option>
+                        <option value="Non-AC Sleeper">Non-AC Sleeper</option>
+                    </select>
+                </div>
+
+                <div id="trainOptionsOnward" style="display:none;">
+                    <label>Preferred Time Range:</label>
+                    <input type="time" id="trainStartTimeOnward" name="trainStartTimeOnward">
+                    to
+                    <input type="time" id="trainEndTimeOnward" name="trainEndTimeOnward">
+                    <br><br>
+                    <label for="trainCoachOnward">Coach Type:</label>
+                    <select id="trainCoachOnward" name="trainCoachOnward">
+                        <option value="Sleeper">Sleeper</option>
+                        <option value="AC-Tier">AC-Tier</option>
+                    </select>
+                </div>
+
+                <!-- Travel Preference: Destination → Source -->
+                <label for="travelPreferenceReturn">Return Travel Preference (Destination → Source):</label>
+                <select id="travelPreferenceReturn" name="travelPreferenceReturn" onchange="showOptions('Return')">
+                    <option value="">--Select Preference--</option>
+                    <option value="Bus">Bus</option>
+                    <option value="Train">Train</option>
+                    <option value="Any">Anything is fine</option>
+                </select>
+
+                <div id="busOptionsReturn" style="display:none;">
+                    <label>Preferred Time Range:</label>
+                    <input type="time" id="busStartTimeReturn" name="busStartTimeReturn">
+                    to
+                    <input type="time" id="busEndTimeReturn" name="busEndTimeReturn">
+                    <br><br>
+                    <label for="busTypeReturn">Bus Type:</label>
+                    <select id="busTypeReturn" name="busTypeReturn">
+                        <option value="AC-Seater">AC Seater</option>
+                        <option value="AC-Sleeper">AC Sleeper</option>
+                        <option value="Non-AC Seater">Non-AC Seater</option>
+                        <option value="Non-AC Sleeper">Non-AC Sleeper</option>
+                    </select>
+                </div>
+
+                <div id="trainOptionsReturn" style="display:none;">
+                    <label>Preferred Time Range:</label>
+                    <input type="time" id="trainStartTimeReturn" name="trainStartTimeReturn">
+                    to
+                    <input type="time" id="trainEndTimeReturn" name="trainEndTimeReturn">
+                    <br><br>
+                    <label for="trainCoachReturn">Coach Type:</label>
+                    <select id="trainCoachReturn" name="trainCoachReturn">
+                        <option value="Sleeper">Sleeper</option>
+                        <option value="AC-Tier">AC-Tier</option>
+                    </select>
+                </div>
+
+                <label for="accommodationPreference">Accommodation Preference:</label>
+                <select id="accommodationPreference" name="accommodationPreference">
+                    <option value="">--Select Preference--</option>
+                    <option value="Low">Low</option>
+                    <option value="Mid">Mid</option>
+                    <option value="Luxury">Luxury</option>
+                </select>
+
+                <div id="lowOptions" style="display: none; margin-top: 10px;">
+                    <label for="lowType">Low Accommodation Type:</label>
+                    <select id="lowType" name="lowType">
+                        <option value="Dormitory">Dormitory</option>
+                        <option value="Normal">Normal</option>
+                    </select>
+                </div>
+
+                <label for="foodSuggestion">Food Suggestion:</label>
+                <select id="foodSuggestion" name="foodSuggestion">
+                    <option value="">--Select Preference--</option>
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
+                </select>
+
+                <div id="foodDetails" style="display: none;">
+                    <label for="foodChoice">Food Choice:</label>
+                    <select id="foodChoice" name="foodChoice">
+                        <option value="Veg">Veg</option>
+                        <option value="Non-Veg">Non-Veg</option>
+                    </select>
+                </div>
+
+                <label for="sightseeing">No. of Sightseeing:</label>
+                <input type="number" id="sightseeing" name="sightseeing" min="1" max="6">
+                <button type="submit" id="submitBtn">Submit</button>
+            </form>
+        </div>
+        <div id="loadingOverlay" style="display: none;">
+            <div id="loading" style="display: none;">
+                <img src="drawing-2802_512-ezgif.com-gif-maker.gif" alt="Loading..." />
+                <p>Processing your request...</p>
+            </div>
+        </div>
+        <div id="resultOverlay">
+            <div id="result" style="display:none;">
+                <h3>Submitted Preferences</h3>
+                <p id="resultText"></p>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="plan.js"></script>
+</body>
+
+</html>

@@ -12,6 +12,7 @@ class SightSchema(BaseModel):
     sTransport:str
     sTransportPrice:str
     sDes:str
+
 class clientIn(BaseModel):
     cId: int
     cName: str
@@ -34,6 +35,8 @@ class clientIn(BaseModel):
     cLowType: Optional[str] = None
     cFoodSug: Optional[bool] = None
     cFoodChoice: Optional[str] = None
+
+    
 class FoodSchema(BaseModel):
     fId:int 
     fItem:str 

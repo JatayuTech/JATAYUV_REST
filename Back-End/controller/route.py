@@ -1,9 +1,11 @@
 from typing import List
-import crud
+from service import crud
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import String
-from schemas import SightSchema,clientIn
-from crud import get_processed_sightseeing_data,clientSave
+from DAO.schemas import SightSchema,clientIn
+from service.crud import get_processed_sightseeing_data,clientSave
+
+
 router=APIRouter()
 @router.post("/saveClient")
 async def saveClient(client:clientIn):

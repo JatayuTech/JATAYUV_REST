@@ -1,11 +1,11 @@
 # crud.py
 import re
-from models import sights, client1, food # Ensure all models are imported
+from Models.models import sights, client1, food 
 from typing import List, Dict, Any
-from schemas import SightSchema, clientIn # Ensure clientIn is imported
-from sqlalchemy import String, and_, or_, select, text # Keep existing imports
-from fastapi import status # Keep existing imports
-from db import database # Ensure database is imported
+from DAO.schemas import SightSchema, clientIn 
+from sqlalchemy import String, and_, or_, select, text 
+from fastapi import status 
+from DAO.db import database 
 
 async def clientSave(cl: clientIn):
     query = client1.insert().values(

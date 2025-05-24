@@ -1,5 +1,5 @@
 from sqlalchemy import BIGINT, Table, Column, Integer, String, Float,Boolean,DateTime
-from db import metadata
+from DAO.db import metadata
 sights = Table(
     "sights",
     metadata,

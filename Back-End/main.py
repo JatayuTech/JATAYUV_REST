@@ -1,27 +1,23 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware # <--- IMPORT THIS
-from db import database, metadata, engine
+from fastapi.middleware.cors import CORSMiddleware # 
+from DAO.db import database, metadata, engine
 
-from routes import route 
+from controller import route 
 
 app = FastAPI()
 
 origins = [
-    "http://localhost",         # General localhost
-    "http://localhost:5500",    # Example: VS Code Live Server
-    "http://127.0.0.1",         # General 127.0.0.1
-    "http://127.0.0.1:5500",    # Example: VS Code Live Server
-    "null",                     
+    "http://localhost:5500",  
+    "http://127.0.0.1",         
+    "http://127.0.0.1:5500",        
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,       # List of allowed origins
-    allow_credentials=True,      # Allow cookies (if your app uses them)
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Crucially include OPTIONS
-    # allow_methods=["*"], # Or allow all methods
-    allow_headers=["Content-Type", "Authorization"], # Allow specific headers
-    # allow_headers=["*"],  # Or allow all headers
+    allow_origins=origins,     
+    allow_credentials=True,      
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 metadata.create_all(engine)

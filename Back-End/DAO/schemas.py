@@ -1,17 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
-class SightSchema(BaseModel):
-    sId:int
-    sPlace:str
-    sLoc:str
-    sTiming:str
-    sEnfee:str
-    sBesttime:str
-    sDis:str
-    sTransport:str
-    sTransportPrice:str
-    sDes:str
+from datetime import datetime, time
+
 
 class clientIn(BaseModel):
     cId: int
@@ -24,22 +14,47 @@ class clientIn(BaseModel):
     cTravelPrf: Optional[str] = None
     cBusType: Optional[str] = None
     cTrainCoach: Optional[str] = None
-    cTravelStartTime: Optional[datetime] = None
-    cTravelEndTime: Optional[datetime] = None
+    cTravelStartTime: Optional[time] = None
+    cTravelEndTime: Optional[time] = None
     cReturnTravelPrf: Optional[str] = None
     cReturnBusType: Optional[str] = None
     cReturnTrainCoach: Optional[str] = None
-    cReturnTravelStartTime: Optional[datetime] = None
-    cReturnTravelEndTime: Optional[datetime] = None
+    cReturnTravelStartTime: Optional[time] = None
+    cReturnTravelEndTime: Optional[time] = None
     cAccomodationPrf: Optional[str] = None
     cLowType: Optional[str] = None
     cFoodSug: Optional[bool] = None
     cFoodChoice: Optional[str] = None
 
-    
+
+
+class SightSchema(BaseModel):
+    sId:int
+    sPlace:str
+    sLoc:str
+    sTiming:str
+    sEnfee:str
+    sBesttime:str
+    sDis:str
+    sTransport:str
+    sTransportPrice:str
+    sDes:str
+
+
 class FoodSchema(BaseModel):
     fId:int 
     fItem:str 
     fAdd:str 
     fLoc:str 
     fResname:str
+
+class Accommdation(BaseModel):
+    aId: int
+    aName: str
+    aAdd: str
+    aRoomtype: str
+    aPrice: str
+    aRating: str
+    aLoc: str
+    aHoteltype: str
+    aDes:str

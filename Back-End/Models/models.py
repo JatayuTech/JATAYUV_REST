@@ -1,20 +1,5 @@
 from sqlalchemy import BIGINT, Table, Column, Integer, String, Float,Boolean,DateTime
 from DAO.db import metadata
-sights = Table(
-    "sights",
-    metadata,
-    Column("sId", Integer, primary_key=True),
-    Column("sPlace", String(100)),
-    Column("sLoc", String(100)),
-    Column("sTiming", String(100)),
-    Column("sEnfee", String(100)),
-    Column("sBesttime", String(100)),
-    Column("sDis", String(100)),
-    Column("sTransport", String(100)),
-    Column("sTransportPrice", String(100)),
-    Column("sDes", String(100))
-)
-
 client1 = Table(
 "client",
 metadata,
@@ -41,6 +26,39 @@ Column("cFoodSug", Boolean),
 Column("cFoodChoice", String(100))
 )
 
+transport = Table(
+    "transport1",
+    metadata,
+    Column("S.No",Integer,primary_key=True),
+    Column("Tname",String(100)),
+    Column("Ttype",String(100)),
+    Column("Tdepa",String(100)),
+    Column("Tarr",String(100)),
+    Column("Tsrc",String(100)),
+    Column("Tdura",String(100)),
+    Column("Tdes",String(100)),
+    Column("Tprice",String(100)),
+    Column("Tfrequency",String(100)),
+    Column("TypeofRoute",String(100))
+)
+
+
+
+sights = Table(
+    "sights",
+    metadata,
+    Column("sId", Integer, primary_key=True),
+    Column("sPlace", String(100)),
+    Column("sLoc", String(100)),
+    Column("sTiming", String(100)),
+    Column("sEnfee", String(100)),
+    Column("sBesttime", String(100)),
+    Column("sDis", String(100)),
+    Column("sTransport", String(100)),
+    Column("sTransportPrice", String(100)),
+    Column("sDes", String(100))
+)
+
 food=Table(
     "food",
     metadata,
@@ -51,4 +69,16 @@ food=Table(
     Column("fResname",String(100))
 )
 
-    
+accomdation1 = Table(
+    "accomodation",
+    metadata,
+    Column("aId", Integer, primary_key=True),
+    Column("aName", String(100)),
+    Column("aAdd", String(100)),
+    Column("aRoomtype", String(100)),
+    Column("aPrice", String(100)),
+    Column("aRating", String(100)),
+    Column("aLoc", String(100)),
+    Column("aHoteltype", String(100)),
+    Column("aDes",String(100))
+)

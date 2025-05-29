@@ -1,13 +1,21 @@
 # crud.py
+from datetime import date
 import re
-from Models.models import sights, client1, food 
+from Models.models import sights, client1, food,transport,accomdation1
 from typing import List, Dict, Any
 from DAO.schemas import SightSchema, clientIn 
 from sqlalchemy import String, and_, or_, select, text 
 from fastapi import status 
 from DAO.db import database 
+from helper.helper import ReplacePrice,parse_db_time_string,combine_with_date,matching,normalize_text
+valid_trains={
+    "Visakhapatnam":"VSKP",
+    "Tirupathi":"TPTY",
+    "Hyderabad":"SC"
+}
 
 async def clientSave(cl: clientIn):
+    reference_date = date.today()
     query = client1.insert().values(
         cId=cl.cId,
         cName=cl.cName,
@@ -19,95 +27,220 @@ async def clientSave(cl: clientIn):
         cTravelPrf=cl.cTravelPrf,
         cBusType=cl.cBusType,
         cTrainCoach=cl.cTrainCoach,
-        cTravelStartTime=cl.cTravelStartTime,
-        cTravelEndTime=cl.cTravelEndTime,
+        cTravelStartTime=combine_with_date(cl.cTravelStartTime, reference_date),
+        cTravelEndTime=combine_with_date(cl.cTravelEndTime, reference_date),
         cReturnTravelPrf=cl.cReturnTravelPrf,
         cReturnBusType=cl.cReturnBusType,
         cReturnTrainCoach=cl.cReturnTrainCoach,
-        cReturnTravelStartTime=cl.cReturnTravelStartTime,
-        cReturnTravelEndTime=cl.cReturnTravelEndTime,
+        cReturnTravelStartTime=combine_with_date(cl.cReturnTravelStartTime, reference_date),
+        cReturnTravelEndTime=combine_with_date(cl.cReturnTravelEndTime, reference_date),
         cAccomodationPrf=cl.cAccomodationPrf,
         cLowType=cl.cLowType,
         cFoodSug=cl.cFoodSug,
         cFoodChoice=cl.cFoodChoice
     )
-    await database.execute(query)
-    # Assuming cId is BIGINT and client sends a unique Date.now()
-    fetch_query = client1.select().where(client1.c.cId == cl.cId)
-    result = await database.fetch_one(fetch_query)
-    return dict(result) if result else None
+    return await database.execute(query)
 
-async def get_processed_sightseeing_data(nsights: int, place: str, initial_price=10000):
-    query = sights.select().where(sights.c.sDes == place)
-    results = await database.fetch_all(query)
-    actual_count = len(results)
+async def getTransportPlan(cl: clientIn):
+    outbound_filtered_by_time_and_type = [] 
+    return_filtered_by_time_and_type = []
 
-    if actual_count == 0:
-        return {
-            "sightseeing_data": [],
-            "message": "No sightseeing data available for the given destination."
-        }
+    # --- Outbound (source to destination) ---
+    if cl.cTravelPrf == "Bus":
+        outbound_base_conditions = [
+            transport.c.Tsrc == cl.cSrc,
+            transport.c.Tdes == cl.cDes,
+            transport.c.TypeofRoute == cl.cTravelPrf+"-Route"
+        ]
+        q1 = select(transport).where(and_(*outbound_base_conditions))
+        all_outbound_records = await database.fetch_all(q1)
+        if all_outbound_records:
+            for rec_dict in all_outbound_records:
+                rec = dict(rec_dict) 
+                passes_time_filter = True 
+            
+                db_dep_time_str = rec.get("Tdepa")
+                db_dep_time = parse_db_time_string(db_dep_time_str)
 
-    limited_results = results[:nsights] if nsights > 0 else results
-    sightseeing_list = []
+                if db_dep_time is None: 
+                    if cl.cTravelStartTime or cl.cTravelEndTime: 
+                        passes_time_filter = False 
+                else:
+                    if cl.cTravelStartTime:
+                        if db_dep_time < cl.cTravelStartTime:
+                            passes_time_filter = False
+                    if passes_time_filter and cl.cTravelEndTime:
+                        if db_dep_time > cl.cTravelEndTime:
+                            passes_time_filter = False
+            
+                if not passes_time_filter:
+                    continue 
+                passes_type_filter = True 
+                if cl.cBusType:
+                    if not matching(str(rec.get("Ttype","")), cl.cBusType):
+                        passes_type_filter = False
+            
+                if passes_type_filter:
+                    outbound_filtered_by_time_and_type.append(rec)
+    else:
+        if cl.cSrc in valid_trains and cl.cDes in valid_trains:
+            short_src = valid_trains[cl.cSrc]
+            short_des = valid_trains[cl.cDes]
+            outbound_base_conditions = [
+                transport.c.Tsrc == short_src,
+                transport.c.Tdes == short_des,
+                transport.c.TypeofRoute == cl.cTravelPrf+"-Route"
+            ]
+            q1 = select(transport).where(and_(*outbound_base_conditions))
+            all_outbound_records = await database.fetch_all(q1)
 
-    # Convert RowProxies to dicts once for easier access and modification if needed
-    processed_results = [dict(row) for row in limited_results]
+            if all_outbound_records:
+                for rec_dict in all_outbound_records:
+                    rec = dict(rec_dict) 
+                    passes_time_filter = True 
+                    passes_type_filter = True 
+                    db_dep_time_str = rec.get("Tdepa")
+                    db_dep_time = parse_db_time_string(db_dep_time_str) 
 
-    for i_data in processed_results: # Iterate over list of dictionaries
-        transport_price_str = i_data.get("sTransportPrice", "0") # Default to "0" if missing
-        transport_parts = transport_price_str.split('to')
-        tp = 0 # Initialize transport price for this sight
+                    if db_dep_time is None: 
+                        if cl.cTravelStartTime or cl.cTravelEndTime: 
+                            passes_time_filter = False
+                    else:
+                        if cl.cTravelStartTime:
+                            if db_dep_time < cl.cTravelStartTime:
+                                passes_time_filter = False
+                        if passes_time_filter and cl.cTravelEndTime: 
+                            if db_dep_time > cl.cTravelEndTime:
+                                passes_time_filter = False
+                    if passes_time_filter and passes_type_filter:
+                        rec["Tprice"] =ReplacePrice(rec.get("Tprice"),cl.cTrainCoach)
+                        outbound_filtered_by_time_and_type.append(rec)
+        else:
+            outbound_filtered_by_time_and_type.append("Train Details not found as per destination")
 
-        try:
-            if len(transport_parts) > 1:
-                tp = ((int(transport_parts[0]) + int(transport_parts[1])) / 2) * 2
-            elif transport_parts[0]: # Ensure it's not an empty string
-                tp = int(transport_parts[0]) * 2
-        except ValueError:
-            # Handle cases where sTransportPrice is not a number or "XtoY"
-            print(f"Warning: Could not parse sTransportPrice '{transport_price_str}' for sight {i_data.get('sPlace')}")
-            tp = 0 # Default to 0 if parsing fails
+    # --- Return (destination to source) ---
 
-        initial_price -= tp
+    if cl.cReturnTravelPrf == "Bus":
+        return_base_conditions = [
+            transport.c.Tsrc == cl.cDes,
+            transport.c.Tdes == cl.cSrc,
+            transport.c.TypeofRoute == cl.cReturnTravelPrf+"-EnRoute"
+        ]
+        q2 = select(transport).where(and_(*return_base_conditions))
+        all_return_records = await database.fetch_all(q2)
 
-        entry_fee_str = i_data.get("sEnfee", "")
-        fee_match = re.search(r'\d+', entry_fee_str)
-        fee = 0 # Initialize entry fee for this sight
-        if fee_match:
-            try:
-                fee = int(fee_match.group())
-            except ValueError:
-                print(f"Warning: Could not parse sEnfee '{entry_fee_str}' for sight {i_data.get('sPlace')}")
-                fee = 0 # Default to 0 if parsing fails
-        initial_price -= fee
+        
+        if all_return_records:
+            for rec_dict in all_return_records:
+                rec = dict(rec_dict)
+                passes_time_filter = True
+                db_dep_time_str = rec.get("Tdepa")
+                db_dep_time = parse_db_time_string(db_dep_time_str)
 
-        sightseeing_list.append({
-            "sId": i_data.get("sId"),
-            "sPlace": i_data.get("sPlace"),
-            "sLoc": i_data.get("sLoc"),
-            "sTiming": i_data.get("sTiming"),
-            "sEnfee": entry_fee_str, # Return original string
-            "sBesttime": i_data.get("sBesttime"),
-            "sDis": i_data.get("sDis"),
-            "sTransport": i_data.get("sTransport"),
-            "sTransportPrice (Doubled)": tp, 
-            "sDes": i_data.get("sDes"),
-            "remaining_price": initial_price 
-        })
+                if db_dep_time is None: 
+                    if cl.cReturnTravelStartTime or cl.cReturnTravelEndTime: 
+                        passes_time_filter = False 
+                else:
+                    if cl.cReturnTravelStartTime:
+                        if db_dep_time < cl.cReturnTravelStartTime:
+                            passes_time_filter = False
+                    if passes_time_filter and cl.cReturnTravelEndTime:
+                        if db_dep_time > cl.cReturnTravelEndTime:
+                            passes_time_filter = False
 
-    return {
-        # "requested_nsights": nsights,
-        # "available_nsights": actual_count,
-        "returned_nsights": len(sightseeing_list),
-        "sightseeing_data": sightseeing_list
-    }
+                if not passes_time_filter:
+                    continue
 
-async def get_processed_food(loc: str, suggest: bool, choice: str): # suggest is boolean from clientIn schema
-    if not suggest: # If cFoodSug was false from frontend
+            # 2. Bus Type Filtering (Python)
+                passes_type_filter = True
+                if cl.cReturnBusType:
+                    if not matching(str(rec.get("Ttype","")), cl.cReturnBusType):
+                        passes_type_filter = False
+            
+                if passes_type_filter:
+                    return_filtered_by_time_and_type.append(rec)
+    else:
+        if cl.cSrc in valid_trains and cl.cDes in valid_trains:
+            short_src = valid_trains[cl.cSrc]
+            short_des = valid_trains[cl.cDes]
+            return_base_conditions = [
+                transport.c.Tsrc == short_des,
+                transport.c.Tdes == short_src,
+                transport.c.TypeofRoute == cl.cReturnTravelPrf+"-EnRoute"
+            ]
+            q2 = select(transport).where(and_(*return_base_conditions))
+            all_return_records = await database.fetch_all(q2)
+
+            return_filtered_by_time_and_type = [] 
+
+            if all_return_records:
+                for rec_dict in all_return_records:
+                    rec = dict(rec_dict) # 
+                    passes_time_filter = True 
+                    passes_type_filter = True 
+                    db_dep_time_str = rec.get("Tdepa") 
+                    db_dep_time = parse_db_time_string(db_dep_time_str) 
+
+                    if db_dep_time is None:
+                        if cl.cReturnTravelStartTime or cl.cReturnTravelEndTime: 
+                            passes_time_filter = False
+                    else:
+                        if cl.cReturnTravelStartTime: 
+                            if db_dep_time < cl.cReturnTravelStartTime:
+                                passes_time_filter = False
+                        if passes_time_filter and cl.cReturnTravelEndTime: 
+                            if db_dep_time > cl.cReturnTravelEndTime:
+                                passes_time_filter = False
+                    if passes_time_filter and passes_type_filter:
+                        rec["Tprice"] =ReplacePrice(rec.get("Tprice"),cl.cReturnTrainCoach)
+                        return_filtered_by_time_and_type.append(rec)
+        else:
+           return_filtered_by_time_and_type.append("Train Details not found as per destination")
+
+
+    outbound_data = outbound_filtered_by_time_and_type
+    return_data = return_filtered_by_time_and_type
+    has_outbound_data = bool(outbound_data) 
+    has_return_data = bool(return_data)   
+    Route_details=[]
+    Enroute_details=[]
+
+    if has_outbound_data and has_return_data:
+        final_len = min(len(outbound_data), len(return_data))
+        Route_details=(outbound_data[:final_len])
+        Enroute_details=(return_data[:final_len])
+    elif has_outbound_data:
+        Route_details.extend(outbound_data)
+        Enroute_details="No Details found for Return requirements"
+    elif has_return_data:
+        Enroute_details.extend(return_data)
+        Route_details="No Details found for Route Requirements"
+    else:
+       Route_details="No Details found for Route Requirements"
+       Enroute_details="No Details found for Return requirements"
+
+    return Route_details,Enroute_details
+
+    
+    
+async def get_processed_sightseeing_data(nsights:int,place:str,initial_price=10000):
+        query = sights.select().where(sights.c.sDes ==place)
+        results = await database.fetch_all(query)
+        actual_count = len(results)
+        if nsights == 0:
+            return {
+                "message": "No sightseeing data available for the given destination."
+            }
+        limited_results = results[:nsights] if nsights > 0 else results
+        return {"sight seeing ":limited_results}
+        
+
+        
+async def get_processed_food(loc: str, suggest: int, choice: str):
+    if not suggest: 
         return {"message": "Food suggestion is not required by client.", "filtered_food": []}
 
-    if not choice: # Handle cases where choice might be None or empty string from frontend
+    if not choice: 
         return {"message": "Food choice (Veg/Non-Veg) not specified by client.", "filtered_food": []}
 
     query = food.select().where(food.c.fAdd == loc)
@@ -120,18 +253,18 @@ async def get_processed_food(loc: str, suggest: bool, choice: str): # suggest is
     normalized_client_choice = choice.strip().upper()
 
     for item_row in results:
-        item_dict = dict(item_row) # Convert RowProxy to dict for easier access
-        db_food_item_string = item_dict.get("fItem", "") # Get fItem, default to empty string if None
+        item_dict = dict(item_row) 
+        db_food_item_string = item_dict.get("fItem", "") 
         match = re.search(r'\((.*?)\)', db_food_item_string)
         if match:
             db_food_type = match.group(1).strip().upper()
 
             type_matches = False
             if normalized_client_choice == "VEG":
-                if db_food_type == "V":  # Directly match "V" for Veg
+                if db_food_type == "V":  
                     type_matches = True
             elif normalized_client_choice == "NON-VEG":
-                if db_food_type == "NV": # Directly match "NV" for Non-Veg
+                if db_food_type == "NV": 
                     type_matches = True
 
             if type_matches:
@@ -140,12 +273,28 @@ async def get_processed_food(loc: str, suggest: bool, choice: str): # suggest is
     if matched_records:
         return {"filtered_food": matched_records}
     else:
-        # Provide a more informative message based on the actual client choice
         if normalized_client_choice == "VEG":
             message = f"No food items marked with '(V)' found at location '{loc}' for your selection."
         elif normalized_client_choice == "NON-VEG":
             message = f"No food items marked with '(NV)' found at location '{loc}' for your selection."
         else:
-            # This case might not be hit if frontend only sends "Veg" or "Non-Veg"
             message = f"No food records found for your specific choice '{choice}' at location '{loc}'."
         return {"message": message, "filtered_food": []}
+
+async def get_accomdation_Low_Medium_High(place:str,acc:str):
+    if acc=="Low":
+        new_acc="Low-Budget"
+    elif acc == "Medium":
+        new_acc = "Medium-Budget"
+    else:
+        new_acc = "High-Budget"
+
+    query = accomdation1.select().where(
+        accomdation1.c.aDes == place,   
+        accomdation1.c.aHoteltype == new_acc
+    )
+    res = await database.fetch_all(query)
+
+    if not res:
+        return {"message": f"No Acc records found for location '{place}'."}
+    return res

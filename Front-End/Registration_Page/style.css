@@ -1,0 +1,100 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #9333ea;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background: #faf5ff;
+  display: flex;
+  width: 90%;
+  max-width: 1100px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+}
+
+.left, .right {
+  flex: 1;
+  padding: 40px;
+}
+
+.left {
+  background: #a855f7;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.left h1 {
+  font-size: 2.8rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 5px #00000055;
+}
+
+.right {
+  background: #f8f5ff;
+  text-align: center;
+  position: relative;
+}
+
+.logo {
+  width: 60px;
+  height: 60px;
+  margin: 10px auto;
+  border-radius: 50%;
+}
+
+form {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+form input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.switch {
+  margin-top: 15px;
+}
+
+.switch a {
+  font-weight: bold;
+  color: black;
+  text-decoration: none;
+}
+
+#message {
+  max-width: 300px;
+  margin: 10px auto;
+  padding: 10px;
+  background-color: #d1fae5;
+  border-left: 5px solid #10b981;
+  color: #065f46;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.hidden {
+  display: none;
+}

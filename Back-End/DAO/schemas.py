@@ -34,7 +34,7 @@ class SightSchema(BaseModel):
     sLoc:str
     sTiming:str
     sEnfee:str
-    sBesttime:str
+    sBestTime:str
     sDis:str
     sTransport:str
     sTransportPrice:str
@@ -100,3 +100,8 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
+class searchHistory(BaseModel):
+    cSrc:str
+    cDes:str
+    cTotalDays:int
+    cBudget:int

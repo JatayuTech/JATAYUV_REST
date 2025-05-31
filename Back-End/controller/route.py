@@ -2,8 +2,8 @@ from typing import List
 from service import crud
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import String
-from DAO.schemas import SightSchema,clientIn
-from service.crud import get_processed_sightseeing_data,clientSave
+from DAO.schemas import SightSchema,clientIn,UserCreate,UserLogin
+from service.crud import get_processed_sightseeing_data,clientSave, get_user_by_email
 
 
 router=APIRouter()
@@ -23,3 +23,29 @@ async def saveClient(client:clientIn):
    
 
 
+@router.post("/register")
+async def UserRegistration(user: UserCreate):
+    existing_user = await crud.get_user_by_email(user.email) 
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered.")
+
+    user_details = await crud.userSave(user)
+    if not user_details:
+        raise HTTPException(status_code=500, detail="User save failed. Register again.")
+    
+    return {"message": "Registration is successful"}
+
+@router.post("/login")
+async def login(user: UserLogin):
+    try:
+        db_user = await get_user_by_email(user.email)
+    except Exception:
+        raise HTTPException(status_code=500, detail="Database error during login")
+
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not registered")
+
+    if db_user["password"] != user.password:
+        raise HTTPException(status_code=401, detail="Incorrect password")
+
+    return {"message": "Login successful", "user": db_user["email"]}

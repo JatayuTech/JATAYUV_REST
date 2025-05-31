@@ -1,9 +1,9 @@
 # crud.py
 from datetime import date
 import re
-from Models.models import sights, client1, food,transport,accomdation1
+from Models.models import sights, client1, food,transport,accomdation1,users
 from typing import List, Dict, Any
-from DAO.schemas import SightSchema, clientIn 
+from DAO.schemas import SightSchema, clientIn ,UserLogin,UserCreate
 from sqlalchemy import String, and_, or_, select, text 
 from fastapi import status 
 from DAO.db import database 
@@ -298,3 +298,19 @@ async def get_accomdation_Low_Medium_High(place:str,acc:str):
     if not res:
         return {"message": f"No Acc records found for location '{place}'."}
     return res
+
+
+
+async def userSave(user: UserCreate):
+    query = users.insert().values(
+        full_name=user.full_name,
+        phone_number=user.phone_number,
+        location=user.location,
+        email=user.email,
+        password=user.password
+    )
+    await database.execute(query)
+    return True
+async def get_user_by_email(email: str):
+    query = users.select().where(users.c.email == email)
+    return await database.fetch_one(query)

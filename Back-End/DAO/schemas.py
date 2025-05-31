@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel,field_validator
 from typing import Optional
 from datetime import datetime, time
-
+import re
 
 class clientIn(BaseModel):
     cId: int
@@ -58,3 +58,45 @@ class Accommdation(BaseModel):
     aLoc: str
     aHoteltype: str
     aDes:str
+
+class UserCreate(BaseModel):
+    full_name: str
+    phone_number: int
+    location: str
+    email: str
+    password: str
+    @field_validator("full_name")
+    def validate_name(cls, v):
+        if len(v) < 3:
+            raise ValueError("Full name must be at least 3 characters long.")
+        return v
+
+    @field_validator("phone_number")
+    def validate_phnNO(cls, v):
+            if len(str(v)) != 10:
+                raise ValueError("Phone Number must be 10 digits.")
+            return v   
+
+    @field_validator("email")
+    def validate_email(cls, v):
+            pattern = r"^[a-zA-Z0-9._-]+@gmail\.com$"
+            if not re.fullmatch(pattern, v):
+                raise ValueError("Invalid email format.")
+            return v
+
+    @field_validator("password")
+    def validate_password(cls, v):
+            if len(v) < 8:
+                raise ValueError("Password must be at least 8 characters long.")
+            if not re.search(r"[A-Z]", v):
+                raise ValueError("Password must contain at least one uppercase letter.")
+            if not re.search(r"[a-z]", v):
+                raise ValueError("Password must contain at least one lowercase letter.")
+            if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", v):
+                raise ValueError("Password must contain at least one special character.")
+            return v
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+

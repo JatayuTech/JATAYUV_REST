@@ -82,3 +82,15 @@ accomdation1 = Table(
     Column("aHoteltype", String(100)),
     Column("aDes",String(100))
 )
+
+
+users = Table(
+    "users",
+    metadata,
+    Column("id", Integer, primary_key=True,autoincrement=True),
+    Column("full_name", String(100), nullable=False,),
+    Column("phone_number", Integer, nullable=False),
+    Column("location", String(100), nullable=False),
+    Column("email", String(100), nullable=False, unique=True, index=True),
+    Column("password", String(255), nullable=False)
+)

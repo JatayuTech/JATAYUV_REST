@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JatayuvAi</title>
+    <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="./image/logo.png" class="logo">
+</head>
+<body>
+
+  <!-- Auth Section -->
+  <div id="authPage" class="auth-container">
+    <div class="container">
+      
+      <!-- Left -->
+     <div class="left-side">
+    <div class="content-card">
+      <div class="overlay-text">
+        <h1>ENJOY THE WORLD</h1>
+        <p>Travel, Explore & Discover!</p>
+        <p>Where AI meets Adventure!</p>
+      </div>
+    </div>
+  </div>
+
+
+      <!-- Right -->
+      <div class="right-side">
+
+        <!-- Login Card -->
+        <div class="auth-card" id="loginCard">
+          <div class="logo-container">
+            <img src="./image/logo.png" alt="Logo" class="logo" />
+          </div>
+          <div id="loginForm">
+            <h2>Login</h2>
+            <input type="email" id="loginEmail" placeholder="Email" required />
+            <input type="password" id="loginPassword" placeholder="Password" required />
+            <button onclick="handleLogin()">Login</button>
+            <div class="toggle">No account? <a onclick="toggleForms()">Register</a></div>
+          </div>
+        </div>
+
+        <!-- Register Card -->
+        <div class="auth-card" id="registerCard" style="display:none;">
+          <div class="logo-container">
+            <img src="./image/logo.png" alt="Logo" class="logo" />
+          </div>
+          <h2>Register</h2>
+          <input type="text" id="regFullName" placeholder="Full Name" required />
+          <input type="text" id="regMobile" placeholder="Mobile Number" required />
+          <input type="text" id="regLocation" placeholder="Location" required />
+          <input type="email" id="regEmail" placeholder="Email" required />
+          <input type="password" id="regPassword" placeholder="Password" required />
+          <button onclick="handleRegister()">Register</button>
+          <div class="toggle">Already have an account? <a onclick="toggleForms()">Login</a></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="index.js"></script>
+
+</body>
+</html>

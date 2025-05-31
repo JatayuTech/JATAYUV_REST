@@ -49,3 +49,5 @@ async def login(user: UserLogin):
         raise HTTPException(status_code=401, detail="Incorrect password")
 
     return {"message": "Login successful", "user": db_user["email"]}
+
+

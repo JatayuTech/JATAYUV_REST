@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jatayuv AI – Auth</title>
+
+  <!-- main stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="">
+</head>
+<body>
+
+  <!-- Auth wrapper -->
+  <section id="authPage" class="auth-container">
+    <div class="container">
+
+      <!-- ◀ left banner -->
+      <div class="left-side">
+        <div class="content-card">
+          <div class="overlay-text">
+            <h1>ENJOY&nbsp;THE&nbsp;WORLD</h1>
+            <p>Travel, Explore & Discover!</p>
+            <p>Where AI meets Adventure!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ▶ right auth card -->
+      <div class="right-side">
+        <!-- ▸ LOGIN -->
+        <div class="auth-card" id="loginCard">
+          <div class="logo-container">
+            <img src="./assert/Jatayuv Ai Black Insta Profile Pic.png" alt="Logo" class="logo" />
+          </div>
+
+          <div id="loginForm">
+            <h2>Login</h2>
+
+            <!-- inline message div -->
+            <div id="loginMessage" class="message hidden"></div>
+
+            <input type="email"    id="loginEmail"    placeholder="Email"    required />
+            <input type="password" id="loginPassword" placeholder="Password" required />
+            <button onclick="handleLogin()">Login</button>
+
+            <div class="toggle">No account? <a href="#" onclick="toggleForms()">Register</a></div>
+          </div>
+        </div>
+
+        <!-- ▸ REGISTER -->
+        <div class="auth-card" id="registerCard" style="display:none;">
+          <div class="logo-container">
+            <img src="./assert/Jatayuv Ai Black Insta Profile Pic.png" alt="Logo" class="logo" />
+          </div>
+
+          <h2>Register</h2>
+
+          <!-- inline message div -->
+          <div id="registerMessage" class="message hidden"></div>
+
+          <input type="text"     id="regFullName" placeholder="Full Name"    required />
+          <input type="text"     id="regMobile"   placeholder="Mobile"       required />
+          <input type="text"     id="regLocation" placeholder="Location"     required />
+          <input type="email"    id="regEmail"    placeholder="Email"        required />
+          <input type="password" id="regPassword" placeholder="Password"     required />
+          <button onclick="handleRegister()">Register</button>
+
+          <div class="toggle">Already have an account? <a href="#" onclick="toggleForms()">Login</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- behaviour -->
+  <script src="script.js"></script>
+</body>
+</html>

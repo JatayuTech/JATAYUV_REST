@@ -34,7 +34,7 @@ class SightSchema(BaseModel):
     sLoc:str
     sTiming:str
     sEnfee:str
-    sBesttime:str
+    sBestTime:str
     sDis:str
     sTransport:str
     sTransportPrice:str

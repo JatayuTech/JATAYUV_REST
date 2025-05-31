@@ -3,7 +3,7 @@ from datetime import date
 import re
 from Models.models import sights, client1, food,transport,accomdation1,users
 from typing import List, Dict, Any
-from DAO.schemas import SightSchema, clientIn ,UserLogin,UserCreate
+from DAO.schemas import SightSchema, clientIn ,UserLogin,UserCreate, searchHistory
 from sqlalchemy import String, and_, or_, select, text 
 from fastapi import status 
 from DAO.db import database 
@@ -314,3 +314,28 @@ async def userSave(user: UserCreate):
 async def get_user_by_email(email: str):
     query = users.select().where(users.c.email == email)
     return await database.fetch_one(query)
+
+async def getDashBoardDetails(email: str, password: str):
+    query = users.select().where(
+    and_(
+        users.c.email == email,
+        users.c.password == password
+        )
+    )
+    userDetails = await database.fetch_one(query)
+    return userDetails
+
+
+async def getSearchHistory(full_name: str):
+    query = client1.select().where(client1.c.cName == full_name)
+    results = await database.fetch_all(query)
+    filtered = [
+        searchHistory(
+            cSrc=row["cSrc"],
+            cDes=row["cDes"],
+            cTotalDays=row["cTotalDays"],
+            cBudget=row["cBudget"]
+        )
+        for row in results
+    ]
+    return filtered

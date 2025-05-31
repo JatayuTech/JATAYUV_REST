@@ -3,7 +3,7 @@ from service import crud
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import String
 from DAO.schemas import SightSchema,clientIn,UserCreate,UserLogin
-from service.crud import get_processed_sightseeing_data,clientSave, get_user_by_email
+from service.crud import get_processed_sightseeing_data,clientSave, get_user_by_email, getDashBoardDetails, getSearchHistory
 
 
 router=APIRouter()
@@ -50,4 +50,14 @@ async def login(user: UserLogin):
 
     return {"message": "Login successful", "user": db_user["email"]}
 
+
+@router.get("/dashboard/{email}/{password}")
+async def dashboard(email:str, password:str):
+
+    userDetails = await getDashBoardDetails(email,password)
+    if not userDetails:
+        return {"User is not registered / User details not matched"}
+    else:
+        searchHis = await getSearchHistory(userDetails["full_name"])
+        return userDetails,searchHis
 

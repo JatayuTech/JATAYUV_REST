@@ -100,3 +100,8 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
+class searchHistory(BaseModel):
+    cSrc:str
+    cDes:str
+    cTotalDays:int
+    cBudget:int

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planning Form</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="plan.css">
+    <link rel="icon" type="image/png" href="/Planning_page/Front-End/image/logo.png" class="logo">
+</head>
+
+<body>
+    <nav id="navbar">
+        <a href="index.html" class="logo-container">
+            <img src="../Front-End/image/logo.png" alt="Logo" class="logo" />
+        </a>
+
+        <div class="menu-icon" id="menuToggle">☰</div>
+
+        <div class="nav-links" id="navLinks">
+            <a href="/Main_page/index.html">Home</a>
+            <a href="/Main_page/about.html">About</a>
+            <a href="/Main_page/Dashboard.html">Dashboard</a>
+            <a href="plan.html">Planning</a>
+            <a href="/Main_page/contact.html">Contact</a>
+            <a href="/Loginpage/login.html" id="logoutBtn" class="logout">Logout</a>
+        </div>
+    </nav>
+    <div class="mainContainer">
+        <div class="container">
+            <h2>Travel Planning</h2>
+            <form id="travelForm">
+
+                <label for="source">Source:</label>
+                <input type="text" id="source" name="source" required value="Hyderabad">
+
+                <label for="destination">Destination:</label>
+                <input type="text" id="destination" name="destination" required value="Tirupathi">
+
+                <label for="days">How Many Days:</label>
+                <input type="number" id="days" name="days" min="1" value="3">
+
+                <label for="budget">Budget:</label>
+                <input type="number" id="budget" name="budget" min="1" value="10000">
+
+                <label for="travelPreferenceOnward">Travel Preference from (Source → Destination):</label>
+                <select id="travelPreferenceOnward" name="travelPreferenceOnward" onchange="showOptions('Onward')">
+                    <option value="">--Select Preference--</option>
+                    <option value="Bus" selected>Bus</option>
+                    <option value="Train">Train</option>
+                </select>
+
+                <div id="busOptionsOnward" style="display:block;">
+                    <label>Preferred Time Range:</label>
+                    <!-- ADD class "time-picker" -->
+                    <input type="time" id="busStartTimeOnward" name="busStartTimeOnward" class="time-picker"
+                        value="16:00">
+                    to
+                    <!-- ADD class "time-picker" -->
+                    <input type="time" id="busEndTimeOnward" name="busEndTimeOnward" class="time-picker" value="22:00">
+                    <br><br>
+                    <label for="busTypeOnward">Bus Type:</label>
+                    <select id="busTypeOnward" name="busTypeOnward">
+                        <option value="">--Select Type--</option>
+                        <option value="AC Seater">AC Seater</option>
+                        <option value="AC Sleeper" selected>AC Sleeper</option>
+                        <option value="Non-AC Seater">Non-AC Seater</option>
+                        <option value="Non-AC Sleeper">Non-AC Sleeper</option>
+                        <option value="Seater-Sleeper">Seater-Sleeper</option>
+                    </select>
+                </div>
+
+                <div id="trainOptionsOnward" style="display:none;">
+                    <label>Preferred Time Range:</label>
+                    <input type="time" id="trainStartTimeOnward" name="trainStartTimeOnward" class="time-picker">
+                    to
+                    <input type="time" id="trainEndTimeOnward" name="trainEndTimeOnward" class="time-picker">
+                    <br><br>
+                    <label for="trainCoachOnward">Coach Type:</label>
+                    <select id="trainCoachOnward" name="trainCoachOnward">
+                        <option value="">--Select Coach--</option>
+                        <option value="Sleeper">Sleeper</option>
+                        <option value="AC">AC</option>
+                    </select>
+                </div>
+
+                <label for="travelPreferenceReturn">Return Travel Preference (Destination → Source):</label>
+                <select id="travelPreferenceReturn" name="travelPreferenceReturn" onchange="showOptions('Return')">
+                    <option value="">--Select Preference--</option>
+                    <option value="Bus" selected>Bus</option>
+                    <option value="Train">Train</option>
+                </select>
+
+                <div id="busOptionsReturn" style="display:block;">
+                    <label>Preferred Time Range:</label>
+                    <!-- ADD class "time-picker" -->
+                    <input type="time" id="busStartTimeReturn" name="busStartTimeReturn" class="time-picker"
+                        value="16:00">
+                    to
+                    <!-- ADD class "time-picker" -->
+                    <input type="time" id="busEndTimeReturn" name="busEndTimeReturn" class="time-picker" value="22:00">
+                    <br><br>
+                    <label for="busTypeReturn">Bus Type:</label>
+                    <select id="busTypeReturn" name="busTypeReturn">
+                        <option value="">--Select Type--</option>
+                        <option value="AC Seater">AC Seater</option>
+                        <option value="AC Sleeper" selected>AC Sleeper</option>
+                        <option value="Non-AC Seater">Non-AC Seater</option>
+                        <option value="Non-AC Sleeper">Non-AC Sleeper</option>
+                        <option value="Seater-Sleeper">Seater-Sleeper</option>
+                    </select>
+                </div>
+
+                <div id="trainOptionsReturn" style="display:none;">
+                    <label>Preferred Time Range:</label>
+                    <!-- ADD class "time-picker" -->
+                    <input type="time" id="trainStartTimeReturn" name="trainStartTimeReturn" class="time-picker">
+                    to
+                    <!-- ADD class "time-picker" -->
+                    <input type="time" id="trainEndTimeReturn" name="trainEndTimeReturn" class="time-picker">
+                    <br><br>
+                    <label for="trainCoachReturn">Coach Type:</label>
+                    <select id="trainCoachReturn" name="trainCoachReturn">
+                        <option value="">--Select Coach--</option>
+                        <option value="Sleeper">Sleeper</option>
+                        <option value="AC">AC</option>
+                    </select>
+                </div>
+
+                <label for="accommodationPreference">Accommodation Preference:</label>
+                <select id="accommodationPreference" name="accommodationPreference">
+                    <option value="">--Select Preference--</option>
+                    <option value="Low">Low</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="High">High</option>
+                </select>
+
+                <label for="foodSuggestion">Food Suggestion:</label>
+                <select id="foodSuggestion" name="foodSuggestion">
+                    <option value="">--Select Preference--</option>
+                    <option value="No">No</option>
+                    <option value="Yes" selected>Yes</option>
+                </select>
+
+                <!-- plan.html (relevant part) -->
+                <div id="foodDetails" style="display: block;">
+                    <label for="foodChoice">Food Choice:</label>
+                    <select id="foodChoice" name="foodChoice">
+                        <option value="">--Select Choice--</option>
+                        <option value="Veg">Veg</option>
+                        <option value="Non-Veg">Non-Veg</option> <!-- Corrected value -->                        <option value="Snacks">Snacks</option>
+                        <option value="Desserts">Desserts</option>
+                        <option value="Tiffins">Tiffins</option>
+                    </select>
+                </div>
+
+                <label for="sightseeing">No. of Sightseeing Spots (0-6):</label>
+                <input type="number" id="sightseeing" name="sightseeing" min="0" max="6" value="2">
+                <button type="submit" id="submitBtn">Generate Plan</button>
+            </form>
+        </div>
+
+        <div id="loadingOverlay" style="display: none;">
+            <div>
+                <img src="../Front-End/image/drawing-2802_512-ezgif.com-gif-maker.gif" alt="Loading..." />
+                <p>Generating your travel plan...</p>
+            </div>
+        </div>
+
+        <div id="resultOverlay" style="display: none;">
+            <div id="result">
+                <h2>Your Trip Itinerary</h2>
+                <div class="day-buttons-container" id="dayButtonsContainer">
+                </div>
+                <div class="day-plan-display" id="dayPlanDisplay">
+                    <p>Please select a day to view its plan.</p>
+                </div>
+                <button id="closeResultBtn">Close</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="plan.js"></script>
+</body>
+
+</html>

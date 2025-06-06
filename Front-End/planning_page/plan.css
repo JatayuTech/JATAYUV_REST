@@ -1,0 +1,410 @@
+/* plan.css */
+
+/* === Global Styles === */
+body {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #370968, #6e3ba8);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
+    color: #333;
+    min-height: 100vh;
+}
+
+/* === Navbar Styling === */
+#navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.logo-container img.logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(5deg); }
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-links a, .logout {
+  color: #f0f0f0;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  transition: color 0.3s ease;
+  padding: 5px 0;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  background-color: #FFAF7B;
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-links a:hover, .nav-links a.active {
+  color: #fff;
+}
+
+.nav-links a:hover::after, .nav-links a.active::after {
+  width: 100%;
+  left: 0;
+}
+
+.logout:hover {
+  color: #FFAF7B;
+}
+
+.menu-icon { display: none; font-size: 2rem; cursor: pointer; }
+
+/* === Main Content & Form === */
+.mainContainer {
+    padding: 40px 20px;
+}
+.container {
+    width: 90%;
+    max-width: 750px;
+    margin: 0 auto;
+    padding: 35px 40px;
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    border-radius: 15px;
+}
+
+.container h2 {
+    text-align: center;
+    color: #0d47a1;
+    font-size: 2.2em;
+    margin-bottom: 35px;
+    font-weight: 600;
+}
+
+#travelForm label {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #343a40;
+    font-size: 1em;
+}
+
+#travelForm input[type="text"],
+#travelForm input[type="number"],
+#travelForm select {
+    width: 100%;
+    padding: 14px 18px;
+    margin-bottom: 15px;
+    border: 1px solid #bcccdc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1em;
+    background-color: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#travelForm input:focus,
+#travelForm select:focus {
+    border-color: #2575fc;
+    box-shadow: 0 0 0 0.25rem rgba(37, 117, 252, 0.25);
+    outline: none;
+}
+
+#travelForm button[type="submit"] {
+    background: linear-gradient(45deg, #2575fc, #6a11cb);
+    color: white;
+    padding: 15px 35px;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.15em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    width: auto;
+    margin: 35px auto 15px;
+    box-shadow: 0 5px 15px rgba(37, 117, 252, 0.35);
+}
+#travelForm button[type="submit"]:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 7px 20px rgba(37, 117, 252, 0.45);
+}
+
+#busOptionsOnward, #trainOptionsOnward,
+#busOptionsReturn, #trainOptionsReturn,
+#lowOptions, #foodDetails {
+    padding: 18px;
+    margin-top: 10px;
+    margin-bottom: 18px;
+    background-color: #f0f3f5;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+}
+
+/* === Overlays (Consolidated) === */
+#loadingOverlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(5px);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1100;
+    transition: opacity 0.3s ease;
+}
+#loadingOverlay img { width: 120px; height: auto; margin-bottom: 25px; }
+#loadingOverlay p { font-size: 1.4em; color: #2575fc; font-weight: 500; }
+
+#resultOverlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* === NEW ANIMATED RESULT MODAL === */
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+#result {
+    background: #f4f7f6;
+    color: #333;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: scaleIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+#resultContent {
+    padding: 15px;
+}
+
+/* Plan Buttons */
+#dayButtonsContainer {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    animation: fadeInUp 0.5s 0.2s backwards;
+}
+
+.day-button {
+    background: #fff;
+    color: #4a4a4a;
+    padding: 10px 25px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1em;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.day-button:hover {
+    transform: translateY(-3px);
+    border-color: #6e3ba8;
+    color: #6e3ba8;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.day-button.active {
+    background: linear-gradient(135deg, #370968, #6e3ba8);
+    color: white;
+    border-color: #6e3ba8;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(110, 59, 168, 0.4);
+}
+
+/* Plan Display Area */
+#dayPlanDisplay {
+    opacity: 0; /* Hidden initially, JS will trigger animation */
+}
+#dayPlanDisplay.visible {
+    animation: fadeInUp 0.6s 0.1s forwards;
+}
+
+/* General Trip Header */
+.trip-header-card {
+    background: linear-gradient(135deg, #2575fc, #6a11cb);
+    color: white;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+.trip-header-card h2 {
+    margin: 0 0 10px 0;
+    font-size: 2em;
+    font-weight: 700;
+}
+.trip-header-card .location-highlight {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 2px 12px;
+    border-radius: 8px;
+}
+.trip-header-card p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1.1em;
+}
+
+/* Section Cards (Transport, Sightseeing etc.) */
+.itinerary-section-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.07);
+}
+.section-title {
+    font-size: 1.5em;
+    color: #333;
+    margin: 0 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+}
+.section-title .icon {
+    font-size: 1.4em;
+    margin-right: 15px;
+}
+
+.transport-direction-title {
+    font-size: 1.1em;
+    color: #666;
+    margin: 20px 0 15px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Item Cards (Bus, Hotel, Food etc.) */
+.itinerary-item-card {
+    background: #f9fafb;
+    border: 1px solid #e7e7e7;
+    border-left: 5px solid #6a11cb;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+.itinerary-item-card:hover {
+    transform: translateY(-5px) scale(1.01);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    border-left-color: #2575fc;
+}
+
+.item-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.item-icon { font-size: 1.5rem; margin-right: 15px; }
+.item-name { margin: 0; font-size: 1.2em; color: #1a1a1a; font-weight: 600;}
+.item-subtitle { margin: -10px 0 15px 0; font-style: italic; color: #777; }
+
+.item-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.detail-pair { font-size: 0.95em; }
+.detail-pair strong { color: #555; }
+.rating { color: #f39c12; font-weight: bold; }
+
+.maps-button {
+    display: inline-flex;
+    align-items: center;
+    background: #3498db;
+    color: white !important;
+    padding: 8px 18px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+.maps-button:hover { background-color: #2980b9; transform: scale(1.05); }
+.maps-button .icon { margin-right: 8px; }
+
+/* No data / error messages */
+.no-data-message, .error-message {
+    text-align: center;
+    padding: 30px;
+    background-color: #fff3f3;
+    border: 1px solid #fcc;
+    border-radius: 8px;
+    color: #c0392b;
+    font-size: 1.1em;
+}
+
+#closeResultBtn {
+    background: linear-gradient(135deg, #d35400, #c0392b);
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1.05em;
+    font-weight: 500;
+    display: block;
+    margin: 40px auto 10px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+#closeResultBtn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+}
+
+/* === Responsive Adjustments === */
+@media screen and (max-width: 768px) {
+    .container { width: 95%; padding: 25px 20px; }
+    .nav-links { display: none; } /* Simplified for brevity */
+    .menu-icon { display: block; }
+
+    .trip-header-card h2 { font-size: 1.6em; }
+    .section-title { font-size: 1.3em; }
+}
